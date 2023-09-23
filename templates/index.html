@@ -40,7 +40,7 @@
         <div class="container col-xxl-8 px-4 ">
             <div class="row flex-lg-row-reverse align-items-center g-5">
               <div class="col-10 col-sm-8 col-lg-6">
-                <video loop autoplay height="840" width="1000" style="margin-left: 30px;" src="{{ url_for('static', filename='lal.mp4') }}" type="video/mp4"></video> 
+                <img src="{{ url_for('static', filename='img.jpeg') }}" class="demo-img"/> 
             </div>
                 <div class="col-lg-6">
                     <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">Shake hands with technology to enhance agriculture</h1>
@@ -191,7 +191,7 @@
           </div>          
             <div class="card-body">
               <h1 class="card-title pricing-card-title" id="rain">553</small></h1>
-              <h2 class="card-title pricing-card-title"></small></h2>
+              <h2 class="card-title pricing-card-title" id="rain-status"></small></h2>
               <button type="button" class="w-100 btn btn-lg custom-button">
                 <a href="./index1" class="w-100 btn btn-lg btn-outline-dark" style="text-decoration: none; color: white;">Further Details</a>
             </button> 
@@ -221,7 +221,7 @@
           
             <div class="card-body">
               <h1 class="card-title pricing-card-title" id="soil">53%</small></h1>
-              <h2 class="card-title pricing-card-title"></h2>
+              <h2 class="card-title pricing-card-title" id="soil-status"></h2>
               <button type="button" class="w-100 btn btn-lg custom-button">
                 <a href="./chart_soilms" class="w-100 btn btn-lg btn-outline-dark" style="text-decoration: none; color: white;">Further Details</a>
             </button> 
@@ -236,7 +236,7 @@
           
             <div class="card-body">
               <h1 class="card-title pricing-card-title" id="ldr">1024 lx</small></h1>
-              <h2 class="card-title pricing-card-title">Sunny Day</h2>
+              <h2 class="card-title pricing-card-title" id="ldr-status">Sunny Day</h2>
               <button type="button" class="w-100 btn btn-lg custom-button">
                 <a href="{{ url_for('static', filename='index4.html') }}" class="w-100 btn btn-lg btn-outline-dark" style="text-decoration: none; color: white;">Further Details</a>
             </button> 
@@ -244,14 +244,14 @@
           </div>
         </div>
         <div class="col">
-          <div class="card mb-4 rounded-3 shadow-sm ">
+          <div class="card mb-4 rounded-3 shadow-sm " style="background-color: grey !important;">
             <div class="card-header py-3" style="background-image: linear-gradient(to bottom,  #e19119, #dd3d11); color: white;">
               <h4 class="my-0 fw-normal">Soil pH level:</h4>
           </div>
           
             <div class="card-body">
               <h1 class="card-title pricing-card-title">10.4</small></h1>
-              <h2 class="card-title pricing-card-title">Soil is basic</h2>
+              <h2 class="card-title pricing-card-title" >Soil is basic</h2>
               <button type="button" class="w-100 btn btn-lg custom-button">
                 <a class="w-100 btn btn-lg btn-outline-dark" style="text-decoration: none; color: white;">Further Details</a>
             </button> 
@@ -259,7 +259,7 @@
           </div>
         </div>
         <div class="col">
-          <div class="card mb-4 rounded-3 shadow-sm ">
+          <div class="card mb-4 rounded-3 shadow-sm " style="background-color: grey !important;">
             <div class="card-header py-3" style="background-image: linear-gradient(to bottom,  #e19119, #dd3d11); color: white;">
               <h4 class="my-0 fw-normal">Fruit Ripening Meter:</h4>
           </div>
@@ -374,7 +374,7 @@
         fetch('/temp')
             .then(response => response.text())
             .then(data => {
-                document.getElementById('temperature').textContent = data;
+                document.getElementById('temperature').textContent = data + "°C";
             })
             .catch(error => {
                 console.error('Error fetching temperature data:', error);
@@ -382,7 +382,13 @@
         fetch('/ldr')
             .then(response => response.text())
             .then(data => {
-                document.getElementById('ldr').textContent = data;
+                document.getElementById('ldr').textContent = data + " lux";
+                if (data < 200){
+                    document.getElementById('ldr-status').textContent = "Night Time";
+                }
+                else{
+                    document.getElementById('ldr-status').textContent = "Day Time";
+                }
             })
             .catch(error => {
                 console.error('Error fetching temperature data:', error);
@@ -390,7 +396,7 @@
         fetch('/humidity')
             .then(response => response.text())
             .then(data => {
-                document.getElementById('humidity').textContent = data;
+                document.getElementById('humidity').textContent = data + "%";
             })
             .catch(error => {
                 console.error('Error fetching temperature data:', error);
@@ -398,7 +404,16 @@
         fetch('/soil')
             .then(response => response.text())
             .then(data => {
-                document.getElementById('soil').textContent = data;
+                document.getElementById('soil').textContent = data + "%";
+                if (data<0){
+                    document.getElementById('soil-status').textContent = "Sensor not on soil";
+                }
+                else if (data>0 && data <30){
+                    document.getElementById('soil-status').textContent = "Dry Soil";
+                }
+                else{
+                    document.getElementById('soil-status').textContent = "Soil Wet";
+                }
             })
             .catch(error => {
                 console.error('Error fetching temperature data:', error);
@@ -407,6 +422,15 @@
             .then(response => response.text())
             .then(data => {
                 document.getElementById('rain').textContent = data;
+                if (data > 500){
+                    document.getElementById('rain-status').textContent = "Not Raining";
+                }
+                else if (data > 300 && data <500){
+                    document.getElementById('rain-status').textContent = "Moderately Raining";
+                }
+                else if (data < 300){
+                    document.getElementById('rain-status').textContent = "Heavily Raining";
+                }
             })
             .catch(error => {
                 console.error('Error fetching temperature data:', error);

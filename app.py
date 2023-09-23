@@ -174,10 +174,10 @@ def rain():
 def index1():
     return render_template('index1.html')
 
-@app.get('/chart_soilms')
+@app.route('/chart_soilms')
 def single_converter():
-    return render_template('chart.html')
+    return render_template('chart.html',moisture_data=moisture_data, no=no)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':\
     app.run(debug=True)

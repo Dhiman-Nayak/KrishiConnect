@@ -2,18 +2,35 @@
 <html lang="en">
 
 <head>
-	<title>Matplotlib Plot</title>
+	<title>Matploth3b Plot</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<style>
 		.div-cent{
 			text-align: center;
 		}
+		img{
+			width: 50%;
+			height: 40%;
+		}
+		@media (max-width: 768px) {
+		img {
+			width: 85%;
+			height: 40%;
+		}
+}
 	</style>
 </head>
 
 <body>
 	<div class="div-cent">
 		<h1>Soil Moisture Prediction for the next 5 days</h1>
-		<img src="{{ url_for('static', filename='images/plot.png') }}" width="900" height="600">
+		<h2>The Prediction of soil moisture data from ML model of next 5 days:</h2>
+			<h3>{{no[0]}}th Sep: {{moisture_data[0]}}%</h3>
+			<h3>{{no[1]}}th Sep: {{moisture_data[1]}}%</h3>
+			<h3>{{no[2]}}th Sep: {{moisture_data[2]}}%</h3>
+			<h3>{{no[3]}}th Sep: {{moisture_data[3]}}%</h3>
+			<h3>{{no[4]}}th Sep: {{moisture_data[4]}}%</h3>
+		<img src="{{ url_for('static', filename='images/plot.png') }}"">
 	</div>
 </body>
 

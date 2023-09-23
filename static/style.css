@@ -12,8 +12,7 @@
     background: linear-gradient(300deg, #5fdf10, hsl(131, 92%, 46%), #2c84c8);
     background-size: cover; /* Use cover for responsive background size */
     animation: gradient-animation 6s ease infinite;
-    height: auto; /* Set height to auto to adjust based on content */
-    min-height: 670px; /* Set a minimum height for the gradient background */
+    height: 300px; /* Set height to auto to adjust based on content */
   }
   
   .custom-button {
@@ -42,18 +41,20 @@
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
   }
   
-  video {
+  .demo-img {
     width: 100%;
     max-width: 100%;
     height: auto;
     display: block;
-    margin: 0 auto;
+    /* margin: 0 auto; */
+    margin-left: 30px;
+    border-radius: 20%;
   }
   
   /* Media query for screens smaller than 768px (typical mobile screens) */
   @media (max-width: 768px) {
-    .gradient-background {
-        height: 300px; /* Adjust the height for smaller screens */
+    .gradient-background2 {
+        height: 730px; /* Adjust the height for smaller screens */
     }
   
     /* Add more specific mobile styles here */

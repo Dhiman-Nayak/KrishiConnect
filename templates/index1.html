@@ -3,17 +3,28 @@
 
 <head>
 	<title>Matplotlib Plot</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<style>
 		.div-cent{
 			text-align: center;
 		}
+		img{
+			width: 50%;
+			height: 40%;
+		}
+		@media (max-width: 768px) {
+		img {
+			width: 85%;
+			height: 40%;
+		}
+}
 	</style>
 </head>
 
 <body>
 	<div class="div-cent">
 		<h1>Rain Prediction for the next 5 days</h1>
-		<img src="{{ url_for('static', filename='images/plot2.png') }}" width="900" height="600">
+		<img src="{{ url_for('static', filename='images/plot2.png') }}">
 	</div>
 </body>
 
