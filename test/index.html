@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Temperature Display</title>
+</head>
+<body>
+    <h1>Temperature Display</h1>
+    <p>Temperature: <span id="temperature">Loading...</span></p>
+
+    <script>
+        // Function to fetch temperature data from ESP8266
+        function fetchTemperature() {
+            fetch('http://192.168.54.93/temp')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('temperature').textContent = data;
+                })
+                .catch(error => {
+                    console.error('Error fetching temperature data:', error);
+                });
+        }
+
+        // Fetch temperature data when the page loads
+        fetchTemperature();
+
+        // Refresh temperature data every 5 seconds (you can adjust this interval)
+        setInterval(fetchTemperature, 5000);
+    </script>
+</body>
+</html>
+

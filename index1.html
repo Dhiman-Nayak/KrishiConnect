@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ... (head section with meta tags, links, and other elements) ... -->
+  <!-- Include Chart.js library -->
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Real-Time Chart with Plotly.js</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" type="text/css" href="style1.css">
+    <style>
+      body {
+          background-image: url('agriculture-background.jpg'); /* Add a background image */
+          background-size: cover;
+          background-repeat: no-repeat;
+          background-attachment: fixed;
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+      }
+
+      .navbar {
+          background-color: #333;
+          color: white;
+          padding: 10px;
+          text-align: center;
+      }
+
+      .wrapper {
+          margin: 20px;
+          padding: 20px;
+          background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+          border-radius: 10px;
+      }
+
+      h1 {
+          color: #333; /* Dark gray text */
+          text-align: center;
+          font-size: 24px;
+      }
+
+      #pointToPointGraph {
+          width: 100%;
+          height: auto; /* Responsive height */
+          max-height: 400px; /* Maximum height */
+          display: block;
+          margin: 0 auto;
+      }
+
+      .agricultural-heading {
+          text-align: center;
+          font-size: 36px;
+          color: #4CAF50; /* Green text for agricultural theme */
+          margin-bottom: 20px;
+      }
+
+      .not-raining {
+          text-align: center;
+          font-size: 24px;
+          color: #ff5722; /* Red text */
+      }
+    </style>
+</head>
+<body>
+  <div class="navbar">
+      <h1>AGRICULTURAL RAINFALL</h1>
+  </div>
+  <div class="wrapper">
+      <h1>Rainfall in 12 Months</h1>
+      <canvas id="pointToPointGraph" width="100" height="170"></canvas>
+      <p class="not-raining">NOT RAINING</p>
+  </div>
+  <script>
+      // Your JavaScript code for the chart remains unchanged
+      // ...
+      // Get a reference to the canvas element
+    var ctx = document.getElementById('pointToPointGraph').getContext('2d');
+
+// Define data for the graph (replace with your actual data)
+var data = {
+  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September','October', 'November', 'December'],
+  datasets: [{
+    label: 'Data Series 1',
+    data: [120, 130, 60, 129, 180, 63, 150, 101, 109, 99, 135, 120], // Replace with your data points
+    borderColor: 'blue', // Line color
+    backgroundColor: 'transparent', // Area color (transparent for line chart)
+    borderWidth: 2, // Line width
+    pointRadius: 5, // Point size
+    pointBackgroundColor: 'blue', // Point color
+  }]
+};
+
+// Define chart configuration
+var options = {
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    xAxis: [{
+      title: {
+        display: true,
+        text: 'Months'
+      }
+    }],
+    yAxis: [{
+      title: {
+        display: true,
+        text: 'Values'
+      }
+    }]
+  }
+};
+
+// Create the line chart
+var myLineChart = new Chart(ctx, {
+  type: 'line',
+  data: data,
+  options: options
+});
+  </script>
+</body>
+</html>
