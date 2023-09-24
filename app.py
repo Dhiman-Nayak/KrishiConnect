@@ -6,18 +6,15 @@ import joblib
 import requests
 from datetime import datetime,timedelta
 
-yes,no=[],[]
-presentday = datetime.now()
-for i in range(0,4):
-     a = presentday-timedelta(4-i)
-     yes.append(a.strftime("%d"))
-for i in range(0,5):
-     b = presentday+timedelta(i+1)    
-     no.append(b.strftime("%d"))
+def get_future_dates(start_date, num_days):
+    dates = []
+    for day in range(num_days):
+        date = start_date + timedelta(days=day)
+        dates.append(date.strftime("%Y-%m-%d"))
+    return dates
+
 url = "https://api.tomorrow.io/v4/weather/forecast?location=kolkata&timesteps=daily&apikey=NWbU1ceSDImxoVp6CmKLzUrXScmgL1c2"
-
 headers = {"accept": "application/json"}
-
 response = requests.get(url, headers=headers)
 data = response.json()  # Parse the JSON response
 
@@ -30,7 +27,6 @@ humidity_data = []
 pressure_data = []
 windspeed_data = []
 rain_data = []
-moisture_data = []
 
 # Extract data for each day
 for day_data in daily_forecast:
@@ -40,65 +36,84 @@ for day_data in daily_forecast:
     windspeed = day_data['values']['windSpeedAvg']
     rain = day_data['values']['rainAccumulationAvg']
     
-    # Add your code here to calculate or fetch moisture data
-    # For now, I'm setting it to a placeholder value
-    
-    
-    # Append data to respective lists
     temperature_data.append(temperature)
     humidity_data.append(humidity)
     pressure_data.append(pressure)
     windspeed_data.append(windspeed)
     rain_data.append(rain)
 
-
+# Load the soil moisture prediction model
 model = joblib.load('soil_moisture_model.pkl')
 
 # Create a list of input values and reshape it to match the model's input format
+input_data = []
 for day in range(5):
-    input_data = [[temperature_data[day], humidity_data[day], pressure_data[day]/10, windspeed_data[day], rain_data[day]]]
+    input_data.append([temperature_data[day], humidity_data[day], pressure_data[day]/10, windspeed_data[day], rain_data[day]])
 
-    # Make predictions
-    soil_moisture_prediction = model.predict(input_data)
+# Make predictions for the next 5 days
+soil_moisture_predictions = model.predict(input_data)
 
-    # Print the predicted soil moisture value
-    moisture_data.append(round(soil_moisture_prediction[0]*100, 2))
+# Synthetic data for the previous 5 days (you can replace this with actual data)
+synthetic_data = [0.60, 0.50, 0.55, 0.69, 0.75]
 
+# Combine the previous and next 5 days of soil moisture data
+soil_moisture_data = synthetic_data + list(soil_moisture_predictions)
 
-x = np.array([yes[0],yes[1],yes[2],yes[3],presentday.strftime("%d"),no[0],no[1],no[2],no[3],no[4]]) # array to be plotted
-y = np.array([60,50,55,69,63,0,0,0,0,0]) # array to be plotted
-for i in range(5):
-    y[5+i] = moisture_data[i]
+# Get future dates
+current_date = datetime.now()
+future_dates = get_future_dates(current_date, 5)
+past_dates = get_future_dates(current_date - timedelta(days=5), 5)
 
-subArray = [60,moisture_data[4]] 
-ids = np.nonzero(np.in1d(y, subArray))[0]
+# Plot soil moisture data with different colors and labels
+plt.plot(past_dates, synthetic_data, label='Previous 5 Days', color='blue', marker='o')
+plt.plot(future_dates, soil_moisture_predictions, label='Next 5 Days', color='green', marker='o')
 
-plt.plot(x,y)
-plt.plot(x[ids], y[ids], 'bo')
+# Rotate x-axis labels for better visibility
+plt.xticks(rotation=45)
+
+# Add labels and legend
+plt.xlabel('Date')
+plt.ylabel('Soil Moisture Prediction')
+plt.legend()
+plt.title('Predicted Soil Moisture Data')
+plt.grid(True)
+
+# Show the plot
+plt.tight_layout()
+# plt.show()
 plt.savefig(os.path.join('static', 'images', 'plot.png'))
 plt.close('all')
 
-x1 = np.array([no[0],no[1],no[2],no[3],no[4]]) # array to be plotted
-y1 = np.array([0,0,0,0,0]) # array to be plotted
-for i in range(5):
-    y1[i] = rain_data[i]
+x1 = np.array([0, 1, 2, 3, 4])  # Use day indices as x-axis values
+y1 = np.array(rain_data)
 
-subArray = [rain_data[0],rain_data[4]] 
+# Set tick labels for the x-axis
+x_labels = [day_data['time'][:10] for day_data in daily_forecast]
+plt.xticks(x1, x_labels, rotation=45)
+
+subArray = [rain_data[0], rain_data[4]]
 ids1 = np.nonzero(np.in1d(y1, subArray))[0]
 
-plt.plot(x1,y1)
+plt.plot(x1, y1)
 plt.plot(x1[ids1], y1[ids1], 'bo')
 
+plt.xlabel('Date')
+plt.ylabel('Rain Accumulation (Avg)')
+plt.title('Predicted Rain Data')
+plt.grid(True)
+
+# Adjust the margins to ensure the entire plot is visible
+plt.subplots_adjust(bottom=0.2)
 # Save the figure in the static directory
 plt.savefig(os.path.join('static', 'images', 'plot2.png'))
 print("plot generated!")
 
 app = Flask(__name__)
-
+esp_url = "http://192.168.95.93"
 # Function to fetch temperature data
 def fetch_temperature():
     try:
-        response = requests.get('http://192.168.95.93/temperature')
+        response = requests.get(f'{esp_url}/temperature')
         if response.status_code == 200:
             return response.text
     except Exception as e:
@@ -107,7 +122,7 @@ def fetch_temperature():
 
 def fetch_humidity():
     try:
-        response = requests.get('http://192.168.95.93/humidity')
+        response = requests.get(f'{esp_url}/humidity')
         if response.status_code == 200:
             return response.text
     except Exception as e:
@@ -116,7 +131,7 @@ def fetch_humidity():
 
 def fetch_ldr():
     try:
-        response = requests.get('http://192.168.95.93/ldr')
+        response = requests.get(f'{esp_url}/ldr')
         if response.status_code == 200:
             return response.text
     except Exception as e:
@@ -125,7 +140,7 @@ def fetch_ldr():
 
 def fetch_soil():
     try:
-        response = requests.get('http://192.168.95.93/soil-mois')
+        response = requests.get(f'{esp_url}/soil-mois')
         if response.status_code == 200:
             return response.text
     except Exception as e:
@@ -134,7 +149,7 @@ def fetch_soil():
 
 def fetch_rain():
     try:
-        response = requests.get('http://192.168.95.93/rain')
+        response = requests.get(f'{esp_url}/rain')
         if response.status_code == 200:
             return response.text
     except Exception as e:
@@ -176,7 +191,8 @@ def index1():
 
 @app.route('/chart_soilms')
 def single_converter():
-    return render_template('chart.html',moisture_data=moisture_data, no=no)
+    soilms_data = [round(i, 3) for i in soil_moisture_predictions]
+    return render_template('chart.html', no=future_dates)
 
 
 if __name__ == '__main__':\
