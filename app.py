@@ -193,6 +193,10 @@ def index1():
 def index4():
     return render_template('index4.html')
 
+@app.route('/index2')
+def index4():
+    return render_template('index2.html')
+
 @app.route('/chart_soilms')
 def single_converter():
     soilms_data = [round(i, 3) for i in soil_moisture_predictions]

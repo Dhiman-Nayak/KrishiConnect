@@ -20,7 +20,33 @@
             <span id="humidity">87 %</span>
         </div>
     </div>
-    <script src="script.js"></script>
+    <!-- <script src="script.js"></script> -->
+    <script>
+        function fetchData() {
+            fetch('/temp')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('temperature').textContent = data + "°C";
+                })
+                .catch(error => {
+                    console.error('Error fetching temperature data:', error);
+                });
+            
+            fetch('/humidity')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('humidity').textContent = data + "%";
+                })
+                .catch(error => {
+                    console.error('Error fetching temperature data:', error);
+                });
+            
+        }
+        // Refresh temperature data when the page loads
+        fetchData();
+        // Refresh temperature data every 2 seconds
+        setInterval(fetchData, 3000);
+    </script>
 </body>
 </html>
 
